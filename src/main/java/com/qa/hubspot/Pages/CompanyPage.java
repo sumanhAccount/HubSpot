@@ -50,6 +50,7 @@ public class CompanyPage extends BasePage{
 		elementUtil.doSendKeys(CompanyDomName, comName);
 		
 		
+		
 		elementUtil.waitForElementToBeLocated(createCompanyBtn, 5);
 		elementUtil.doClick(createCompanyBtn);
 		
