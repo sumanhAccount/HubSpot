@@ -1,35 +1,42 @@
 pipeline{
-    
-    agent any
-    
-    stages{
-        stage("Build"){
-            steps{
-                echo "Building"
-            }
-        }
-        
-        stage("Test"){
-            steps{
-                echo "Testing"
-            }
-        }
-            
-        stage("Stage"){
-            steps{
-                echo "Deploy Stage testing"
-            }
-            
-        }  
-            stage("PROD"){
-            steps{
-                echo "Production Testing"
-            }
-        }
-    }
-    
-    
-        
-    
-    
+agent any
+stages{
+stage ('Build'){
+steps{
+echo "Building"
+}
+}
+stage('Test'){
+steps {
+catchError(buildResult:'SUCCESS', stageResult:'FAILURE'){
+bat "mvn clean install"
+}
+}
+}
+
+stage ('Publish Allure Reports'){
+steps{
+script{
+allure([
+includeProperties:false,
+jdk:'',
+properties:[],
+reportBuildPolicy:'ALWAYS',
+results:[[path:'/allure-results']]
+])
+}
+}
+}
+stage('Publish Extent Report'){
+steps{
+publishHTML([allowMissing:false,
+alwaysLinkToLastBuild:false,
+KeepAll: false,
+reportDir:'build',
+reportFiles:'TestExecutionReport.html',
+reportName:'HTML Extent Report',
+reportTitles:''])
+}
+}
+}
 }
