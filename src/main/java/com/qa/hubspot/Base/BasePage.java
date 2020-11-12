@@ -45,15 +45,25 @@ public WebDriver init_driver(Properties prop)
 	if(bname.equals("chrome")) {
 		WebDriverManager.chromedriver().setup();
 		
-		tlDriver.set(new ChromeDriver(optionmanager.getChromeOptions()));
+		if(Boolean.parseBoolean(prop.getProperty("remote"))) {
+			init_remoteDriver(bname);
+		} else {
+			tlDriver.set(new ChromeDriver(optionmanager.getChromeOptions()));
+		}
+		
+		
 	//driver= new ChromeDriver(optionmanager.getChromeOptions());
 		}
 	
 		else if(bname.equals("firefox"))
 	{
 		WebDriverManager.firefoxdriver().setup();
+		if(Boolean.parseBoolean(prop.getProperty("remote"))) {
+			init_remoteDriver(bname);
+		} else {
+			tlDriver.set(new FirefoxDriver(optionmanager.getFirefoxOptions()));
+		}
 		
-		tlDriver.set(new FirefoxDriver(optionmanager.getFirefoxOptions()));
 		//driver= new FirefoxDriver(optionmanager.getFirefoxOptions());
 		}
 	
@@ -77,17 +87,19 @@ public static synchronized WebDriver getDriver()
 	return tlDriver.get();
 }
 
-public void init_remoreDriver(String browserName)
+public void init_remoteDriver(String browserName)
 {
 	if(browserName.equals("chrome"))
 	{
 		DesiredCapabilities cap=  DesiredCapabilities.chrome();
 		cap.setCapability(ChromeOptions.CAPABILITY,optionmanager.getChromeOptions() );
+		cap.setCapability("version", "85.0");
+		cap.setCapability("enableVNC", true);
 		
 		try {
 			tlDriver.set(new RemoteWebDriver(new URL(prop.getProperty("huburl")),cap));
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
@@ -97,11 +109,13 @@ public void init_remoreDriver(String browserName)
 	{
 		DesiredCapabilities cap=  DesiredCapabilities.firefox();
 		cap.setCapability(FirefoxOptions.FIREFOX_OPTIONS,optionmanager.getFirefoxOptions());
+		cap.setCapability("version", "63.0");
+		cap.setCapability("enableVNC", true);
 		
 		try {
 			tlDriver.set(new RemoteWebDriver(new URL(prop.getProperty("huburl")),cap));
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
@@ -110,15 +124,16 @@ public void init_remoreDriver(String browserName)
 public Properties init_prop()
 {
 	prop= new Properties();
+	FileInputStream ip;
 	try {
-		FileInputStream ip= new FileInputStream(".//src//main//java//com//qa//hubspot//config//config.properties");
+		 ip= new FileInputStream(".//src//main//java//com//qa//hubspot//config//config.properties");
 		
 		prop.load(ip);
 	} catch (FileNotFoundException e) {
-		// TODO Auto-generated catch block
+		
 		e.printStackTrace();
 	} catch (IOException e) {
-		// TODO Auto-generated catch block
+		
 		e.printStackTrace();
 	}
 	

@@ -42,11 +42,11 @@ public class DealsPage extends BasePage {
 	}
 	
 	
-	public void createDeals()
+	public void createDeals(String dname)
 	{  
 		elementUtil.doClick(CreateDeal);
 		elementUtil.waitForElementToBeVisible(DealName, 10);
-		elementUtil.doSendKeys(DealName, "Dhruva");
+		elementUtil.doSendKeys(DealName, dname);
 		//elementUtil.doDropDownSelectByIndex(DealsStage, 3);
 		elementUtil.waitForElementToBeVisible(CreateFinal, 5);
 		elementUtil.doClick(CreateFinal);

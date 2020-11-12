@@ -50,9 +50,9 @@ public class DealsPageTest {
 		return data;
 	}
 	@Test(priority =2, dataProvider = "getDeals")
-	public void createDeals()
+	public void createDeals(String DealName)
 	{
-		dealspage.createDeals();
+		dealspage.createDeals(DealName);
 	}
 	
 	@Test(priority =1)
